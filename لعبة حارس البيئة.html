@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 حارس البيئة الصغير – مغامرة إيكو-توبيا</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Tajawal -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'eco-green': '#4ADE80',
+                        'eco-dark-green': '#15803D',
+                        'eco-blue': '#38BDF8',
+                        'eco-yellow': '#FACC15',
+                        'eco-cream': '#FEF9C3',
+                        'eco-brown': '#854D0E',
+                        'pastel-bg': '#F0FDF4'
+                    },
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    animation: {
+                        'bounce-slow': 'bounce 2s infinite',
+                        'wiggle': 'wiggle 1s ease-in-out infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-3deg)' },
+                            '50%': { transform: 'rotate(3deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #F0FDF4;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 4px solid #BBF7D0;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F0FDF4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4ADE80;
+            border-radius: 9999px;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-800 bg-gradient-to-b from-green-50 via-sky-50 to-green-100 p-2 sm:p-4">
+
+    <!-- Top Navigation Bar -->
+    <header class="w-full max-w-4xl mx-auto flex items-center justify-between bg-white/90 backdrop-blur-sm rounded-3xl p-3 sm:p-4 shadow-md border-2 border-green-200 mb-4 no-print">
+        <div class="flex items-center gap-2 sm:gap-3">
+            <span class="text-2xl sm:text-3xl">🌱</span>
+            <h1 class="text-lg sm:text-2xl font-black text-eco-dark-green tracking-wide">إيكو-توبيا</h1>
+        </div>
+
+        <!-- Score & Sound Controls -->
+        <div class="flex items-center gap-3">
+            <div class="flex items-center bg-yellow-100 border-2 border-yellow-400 px-3 py-1.5 rounded-2xl shadow-inner">
+                <span class="text-xl sm:text-2xl ml-2">⭐</span>
+                <span class="text-base sm:text-xl font-bold text-yellow-800">النقاط: <span id="score-display" class="font-black text-2xl text-yellow-900">0</span></span>
+            </div>
+            
+            <button id="sound-btn" onclick="toggleSound()" class="w-10 h-10 sm:w-12 sm:h-12 bg-sky-100 hover:bg-sky-200 text-sky-700 rounded-2xl flex items-center justify-center border-2 border-sky-300 transition-all">
+                <i id="sound-icon" class="fas fa-volume-up text-lg sm:text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl mx-auto flex-grow flex flex-col justify-center items-center">
+
+        <!-- Character Banner Header (Ghosoun) -->
+        <div id="ghosoun-container" class="w-full bg-emerald-500 rounded-3xl p-4 mb-4 text-white shadow-lg border-4 border-emerald-300 relative overflow-hidden flex flex-col sm:flex-row items-center gap-4 no-print transition-all duration-300">
+            <!-- SVG Ghosoun Character -->
+            <div class="relative flex-shrink-0">
+                <div class="w-24 h-24 sm:w-28 sm:h-28 bg-emerald-100 rounded-full flex items-center justify-center border-4 border-yellow-300 shadow-md animate-wiggle">
+                    <svg viewBox="0 0 100 100" class="w-20 h-20 sm:w-24 sm:h-24">
+                        <!-- Trunk -->
+                        <path d="M42 65 C42 85, 38 90, 30 95 L70 95 C62 90, 58 85, 58 65 Z" fill="#854D0E" />
+                        <!-- Leaves (Crown) -->
+                        <circle cx="50" cy="40" r="30" fill="#22C55E" />
+                        <circle cx="35" cy="45" r="20" fill="#16A34A" />
+                        <circle cx="65" cy="45" r="20" fill="#16A34A" />
+                        <circle cx="50" cy="25" r="22" fill="#4ADE80" />
+                        <!-- Eyes -->
+                        <circle cx="42" cy="38" r="4" fill="#000" />
+                        <circle cx="58" cy="38" r="4" fill="#000" />
+                        <circle cx="44" cy="36" r="1.5" fill="#FFF" />
+                        <circle cx="60" cy="36" r="1.5" fill="#FFF" />
+                        <!-- Cheeks -->
+                        <circle cx="36" cy="44" r="3.5" fill="#F472B6" opacity="0.7" />
+                        <circle cx="64" cy="44" r="3.5" fill="#F472B6" opacity="0.7" />
+                        <!-- Mouth -->
+                        <path id="ghosoun-mouth" d="M43 46 Q50 54 57 46" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" />
+                        <!-- Flowers on crown -->
+                        <circle cx="35" cy="22" r="4" fill="#F43F5E" />
+                        <circle cx="35" cy="22" r="1.5" fill="#FACC15" />
+                        <circle cx="65" cy="25" r="4" fill="#3B82F6" />
+                        <circle cx="65" cy="25" r="1.5" fill="#FACC15" />
+                    </svg>
+                </div>
+                <span class="absolute -bottom-2 right-1/2 translate-x-1/2 bg-yellow-400 text-green-900 font-extrabold text-xs px-3 py-0.5 rounded-full border border-green-700 shadow">غصون</span>
+            </div>
+
+            <!-- Speech Bubble -->
+            <div class="flex-grow bg-white text-gray-800 p-4 rounded-2xl shadow-inner border-2 border-emerald-200 relative w-full text-center sm:text-right">
+                <div class="hidden sm:block absolute top-1/2 -right-3 -translate-y-1/2 w-0 h-0 border-t-8 border-t-transparent border-l-12 border-l-white border-b-8 border-b-transparent"></div>
+                <p id="ghosoun-speech" class="text-base sm:text-lg font-bold text-emerald-900 leading-relaxed">
+                    مرحبًا يا بطل! هل تساعدني في حماية كوكبنا الجميل؟ هيا نلعب ونتعلم معًا! 🌸✨
+                </p>
+            </div>
+        </div>
+
+        <!-- Feedback Floating Toast -->
+        <div id="feedback-toast" class="hidden fixed top-24 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-white font-black text-lg sm:text-xl shadow-2xl transition-all duration-300 transform scale-90 border-4 border-white">
+            <span id="feedback-text"></span>
+        </div>
+
+        <!-- Screens Stack -->
+        <div class="w-full glass-card rounded-3xl p-4 sm:p-8 min-h-[420px] flex flex-col justify-center items-center relative overflow-hidden">
+
+            <!-- 1. START SCREEN -->
+            <div id="screen-start" class="flex flex-col items-center text-center space-y-6 w-full max-w-lg">
+                <div class="relative">
+                    <span class="text-7xl sm:text-8xl block animate-bounce-slow">🌍</span>
+                    <span class="absolute -top-2 -right-2 text-4xl animate-pulse">✨</span>
+                    <span class="absolute -bottom-2 -left-2 text-4xl animate-pulse">🌱</span>
+                </div>
+                
+                <div>
+                    <h2 class="text-2xl sm:text-4xl font-black text-eco-dark-green mb-2">حارس البيئة الصغير</h2>
+                    <p class="text-base sm:text-xl font-bold text-emerald-700">مغامرة شائقة لنظافة وحماية كوكب إيكو-توبيا!</p>
+                </div>
+
+                <!-- Input Child Name -->
+                <div class="w-full max-w-xs space-y-2">
+                    <label for="child-name" class="block font-bold text-gray-700 text-sm sm:text-base">اكتب اسمك يا بطل البيئة:</label>
+                    <input type="text" id="child-name" placeholder="اسم البطل الصغير..." class="w-full px-4 py-3 text-center text-lg rounded-2xl border-2 border-emerald-300 focus:outline-none focus:border-emerald-500 font-bold text-emerald-900 shadow-inner bg-green-50/50">
+                </div>
+
+                <button onclick="startGame()" class="btn-bounce w-full max-w-xs bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black text-xl sm:text-2xl py-4 px-8 rounded-3xl shadow-xl border-b-4 border-green-800 transition-all flex items-center justify-center gap-3 group">
+                    <span>ابدأ المغامرة</span>
+                    <i class="fas fa-play text-yellow-300 group-hover:translate-x-[-4px] transition-transform"></i>
+                </button>
+            </div>
+
+            <!-- 2. STAGE 1: Put Everything in Its Place (Recycling Sort) -->
+            <div id="screen-stage1" class="hidden flex-col items-center w-full space-y-4">
+                <div class="w-full flex justify-between items-center bg-emerald-100 p-2 sm:p-3 rounded-2xl border border-emerald-300">
+                    <span class="font-black text-emerald-800 text-sm sm:text-base">المرحلة الأولى: ضع كل شيء في مكانه 🗑️</span>
+                    <span class="bg-emerald-500 text-white px-3 py-1 rounded-full font-bold text-xs sm:text-sm" id="stage1-progress">1 / 4</span>
+                </div>
+
+                <!-- Current Waste Item to Sort -->
+                <div class="text-center space-y-2 py-2">
+                    <p class="text-gray-600 font-bold text-sm sm:text-base">اضغط أو اسحب العنصر إلى السلة المناسبة:</p>
+                    <div id="current-item-card" class="bg-white rounded-3xl p-4 shadow-lg border-4 border-yellow-300 inline-flex flex-col items-center min-w-[150px] sm:min-w-[180px] transform transition-transform hover:scale-105 cursor-grab">
+                        <span id="item-emoji" class="text-6xl sm:text-7xl mb-2 animate-bounce">🍾</span>
+                        <span id="item-name" class="font-extrabold text-lg sm:text-xl text-gray-800">زجاجة بلاستيكية</span>
+                    </div>
+                </div>
+
+                <!-- Bins Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full">
+                    <!-- Plastic Bin -->
+                    <button onclick="checkSort('plastic')" class="btn-bounce bg-blue-100 hover:bg-blue-200 border-4 border-blue-400 p-3 sm:p-4 rounded-3xl flex flex-col items-center text-center transition-all shadow-md group">
+                        <span class="text-4xl sm:text-5xl mb-1 group-hover:scale-110 transition-transform">🔵</span>
+                        <span class="font-black text-blue-900 text-sm sm:text-base">بلاستيك</span>
+                    </button>
+
+                    <!-- Paper Bin -->
+                    <button onclick="checkSort('paper')" class="btn-bounce bg-yellow-100 hover:bg-yellow-200 border-4 border-yellow-400 p-3 sm:p-4 rounded-3xl flex flex-col items-center text-center transition-all shadow-md group">
+                        <span class="text-4xl sm:text-5xl mb-1 group-hover:scale-110 transition-transform">🟡</span>
+                        <span class="font-black text-yellow-900 text-sm sm:text-base">وراق ومقوى</span>
+                    </button>
+
+                    <!-- Metal Bin -->
+                    <button onclick="checkSort('metal')" class="btn-bounce bg-slate-200 hover:bg-slate-300 border-4 border-slate-400 p-3 sm:p-4 rounded-3xl flex flex-col items-center text-center transition-all shadow-md group">
+                        <span class="text-4xl sm:text-5xl mb-1 group-hover:scale-110 transition-transform">⚪</span>
+                        <span class="font-black text-slate-800 text-sm sm:text-base">معادن</span>
+                    </button>
+
+                    <!-- Organic Bin -->
+                    <button onclick="checkSort('organic')" class="btn-bounce bg-amber-100 hover:bg-amber-200 border-4 border-amber-500 p-3 sm:p-4 rounded-3xl flex flex-col items-center text-center transition-all shadow-md group">
+                        <span class="text-4xl sm:text-5xl mb-1 group-hover:scale-110 transition-transform">🟤</span>
+                        <span class="font-black text-amber-900 text-sm sm:text-base">نفايات عضوية</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3. STAGE 2: Eco-Friend or Not? -->
+            <div id="screen-stage2" class="hidden flex-col items-center w-full space-y-4">
+                <div class="w-full flex justify-between items-center bg-sky-100 p-2 sm:p-3 rounded-2xl border border-sky-300">
+                    <span class="font-black text-sky-800 text-sm sm:text-base">المرحلة الثانية: صديق البيئة أم لا؟ 🤝</span>
+                    <span class="bg-sky-500 text-white px-3 py-1 rounded-full font-bold text-xs sm:text-sm" id="stage2-progress">1 / 4</span>
+                </div>
+
+                <h3 id="stage2-question" class="text-lg sm:text-2xl font-black text-gray-800 text-center py-2">أيهما أفضل للتصرف الصحيح؟</h3>
+
+                <!-- Choices Container -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                    <!-- Option A -->
+                    <button id="opt-a-btn" onclick="checkEcoFriend(0)" class="btn-bounce bg-white hover:bg-emerald-50 border-4 border-emerald-300 p-4 sm:p-6 rounded-3xl flex flex-col items-center text-center shadow-lg transition-all space-y-3 group">
+                        <span id="opt-a-emoji" class="text-6xl sm:text-7xl group-hover:scale-110 transition-transform">🚰</span>
+                        <span id="opt-a-text" class="font-black text-gray-800 text-base sm:text-lg">إغلاق صنبور المياه بعد الاستخدام</span>
+                    </button>
+
+                    <!-- Option B -->
+                    <button id="opt-b-btn" onclick="checkEcoFriend(1)" class="btn-bounce bg-white hover:bg-rose-50 border-4 border-rose-300 p-4 sm:p-6 rounded-3xl flex flex-col items-center text-center shadow-lg transition-all space-y-3 group">
+                        <span id="opt-b-emoji" class="text-6xl sm:text-7xl group-hover:scale-110 transition-transform">💧</span>
+                        <span id="opt-b-text" class="font-black text-gray-800 text-base sm:text-lg">ترك صنبور المياه مفتوحاً</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. STAGE 3: Save Nature -->
+            <div id="screen-stage3" class="hidden flex-col items-center w-full space-y-4">
+                <div class="w-full flex justify-between items-center bg-emerald-100 p-2 sm:p-3 rounded-2xl border border-emerald-300">
+                    <span class="font-black text-emerald-800 text-sm sm:text-base">المرحلة الثالثة: أنقذ الطبيعة 🌿</span>
+                    <span class="bg-emerald-500 text-white px-3 py-1 rounded-full font-bold text-xs sm:text-sm" id="stage3-progress">1 / 3</span>
+                </div>
+
+                <h3 id="stage3-instruction" class="text-lg sm:text-xl font-black text-emerald-900 text-center">اختر التصرف الذي يحمي الطبيعة وتساعد غصون:</h3>
+
+                <!-- Multiple Options Grid -->
+                <div id="stage3-options-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 w-full">
+                    <!-- Dynamic choices inserted via JS -->
+                </div>
+            </div>
+
+            <!-- 5. END CERTIFICATE SCREEN -->
+            <div id="screen-end" class="hidden flex-col items-center w-full space-y-6">
+                <!-- Certificate Wrapper (Printable) -->
+                <div id="printable-certificate" class="w-full bg-gradient-to-b from-yellow-50 to-green-50 border-8 border-yellow-400 p-6 sm:p-8 rounded-3xl shadow-2xl text-center relative overflow-hidden">
+                    <!-- Certificate Decorative Badges -->
+                    <div class="absolute top-2 right-2 text-3xl">🏅</div>
+                    <div class="absolute top-2 left-2 text-3xl">🌱</div>
+                    <div class="absolute bottom-2 right-2 text-3xl">⭐</div>
+                    <div class="absolute bottom-2 left-2 text-3xl">🌍</div>
+
+                    <div class="space-y-4">
+                        <div class="inline-block bg-yellow-400 text-green-950 font-black text-sm sm:text-base px-6 py-1 rounded-full uppercase tracking-wider shadow">
+                            شهادة شرفية رسمية
+                        </div>
+
+                        <h2 class="text-3xl sm:text-5xl font-black text-emerald-800">بطل البيئة الصغير</h2>
+                        
+                        <p class="text-gray-700 text-base sm:text-lg font-bold">تشهد الشجرة الحكيمة "غصون" وكوكب إيكو-توبيا بأن البطل:</p>
+
+                        <div id="cert-hero-name" class="text-2xl sm:text-4xl font-black text-emerald-600 border-b-4 border-dashed border-emerald-400 inline-block px-8 py-1">
+                            البطل الصغير
+                        </div>
+
+                        <p class="text-gray-700 font-bold text-sm sm:text-base max-w-md mx-auto leading-relaxed">
+                            قد أتم جميع المهام بنجاح وشغف، وساعد في فرز القمامة، ترشيد الموارد، وحماية الأشجار والكوكب! 🌳✨
+                        </p>
+
+                        <!-- Final Stats -->
+                        <div class="flex justify-center items-center gap-6 py-2">
+                            <div class="bg-white px-4 py-2 rounded-2xl border-2 border-yellow-300 shadow-sm">
+                                <span class="block text-xs font-bold text-gray-500">النقاط الكلية</span>
+                                <span id="final-score" class="text-2xl font-black text-yellow-600">0</span>
+                            </div>
+                            <div class="bg-white px-4 py-2 rounded-2xl border-2 border-green-300 shadow-sm">
+                                <span class="block text-xs font-bold text-gray-500">مستوى البطولة</span>
+                                <span class="text-xl font-black text-emerald-600">ذهبي 🏆</span>
+                            </div>
+                        </div>
+
+                        <!-- Date & Signature -->
+                        <div class="flex justify-between items-end pt-4 border-t-2 border-emerald-200 text-xs sm:text-sm font-bold text-emerald-800">
+                            <div>التاريخ: <span id="cert-date"></span></div>
+                            <div>التوقيع: <span class="font-black text-emerald-900">الشجرة غصون 🌳</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md no-print">
+                    <button onclick="window.print()" class="btn-bounce flex-1 bg-sky-500 hover:bg-sky-600 text-white font-black text-lg py-3 px-6 rounded-2xl shadow-lg border-b-4 border-sky-700 flex items-center justify-center gap-2">
+                        <i class="fas fa-print"></i>
+                        <span>طباعة الشهادة</span>
+                    </button>
+                    <button onclick="restartGame()" class="btn-bounce flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg py-3 px-6 rounded-2xl shadow-lg border-b-4 border-emerald-700 flex items-center justify-center gap-2">
+                        <i class="fas fa-redo"></i>
+                        <span>العب مرة أخرى</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-4xl mx-auto text-center py-3 text-xs sm:text-sm font-bold text-emerald-800 no-print">
+        منصة إيكو-توبيا التعليمية © 2026 – للتعلم التفاعلي والأطفال الأبطال 🌿
+    </footer>
+
+    <!-- Audio Effects using Web Audio API -->
+    <script>
+        // Game State Variables
+        let soundEnabled = true;
+        let score = 0;
+        let playerName = "البطل الصغير";
+
+        // Audio Synthesizer (Web Audio API)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                    osc.frequency.setValueAtTime(196, audioCtx.currentTime + 0.15); // G3
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                } else if (type === 'win') {
+                    const notes = [400, 500, 600, 800];
+                    notes.forEach((freq, i) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, audioCtx.currentTime + (i * 0.12));
+                        g.gain.setValueAtTime(0.25, audioCtx.currentTime + (i * 0.12));
+                        g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (i * 0.12) + 0.3);
+                        o.start(audioCtx.currentTime + (i * 0.12));
+                        o.stop(audioCtx.currentTime + (i * 0.12) + 0.3);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                icon.className = 'fas fa-volume-up text-lg sm:text-xl';
+            } else {
+                icon.className = 'fas fa-volume-mute text-lg sm:text-xl text-rose-500';
+            }
+        }
+
+        function updateGhosoun(text, isHappy = true) {
+            document.getElementById('ghosoun-speech').innerText = text;
+            const mouth = document.getElementById('ghosoun-mouth');
+            if (isHappy) {
+                mouth.setAttribute('d', 'M43 46 Q50 54 57 46'); // Smile
+            } else {
+                mouth.setAttribute('d', 'M43 52 Q50 46 57 52'); // Oops / Surprised
+            }
+        }
+
+        function showToast(text, isCorrect = true) {
+            const toast = document.getElementById('feedback-toast');
+            const toastText = document.getElementById('feedback-text');
+
+            toastText.innerText = text;
+            if (isCorrect) {
+                toast.className = "fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-white font-black text-lg sm:text-xl shadow-2xl transition-all duration-300 bg-emerald-500 border-4 border-white flex items-center gap-2 transform scale-100";
+            } else {
+                toast.className = "fixed top-20 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full text-white font-black text-lg sm:text-xl shadow-2xl transition-all duration-300 bg-amber-500 border-4 border-white flex items-center gap-2 transform scale-100";
+            }
+
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 1800);
+        }
+
+        function addScore(points = 10) {
+            score += points;
+            document.getElementById('score-display').innerText = score;
+        }
+
+        function switchScreen(screenId) {
+            ['screen-start', 'screen-stage1', 'screen-stage2', 'screen-stage3', 'screen-end'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+            document.getElementById(screenId).classList.add('flex');
+        }
+
+        // ==================== STAGE 1 LOGIC ====================
+        const stage1Items = [
+            { name: "زجاجة بلاستيكية", emoji: "🍾", type: "plastic" },
+            { name: "ورقة دفتر", emoji: "📄", type: "paper" },
+            { name: "علبة عصير معدنية", emoji: "🥫", type: "metal" },
+            { name: "قشرة موز", emoji: "🍌", type: "organic" }
+        ];
+        let stage1Index = 0;
+
+        function loadStage1Item() {
+            if (stage1Index >= stage1Items.length) {
+                // Move to Stage 2
+                startStage2();
+                return;
+            }
+
+            const item = stage1Items[stage1Index];
+            document.getElementById('item-name').innerText = item.name;
+            document.getElementById('item-emoji').innerText = item.emoji;
+            document.getElementById('stage1-progress').innerText = `${stage1Index + 1} / ${stage1Items.length}`;
+            updateGhosoun(`ساعدني في وضع (${item.name}) في السلة المناسبة! 🗑️`, true);
+        }
+
+        function checkSort(selectedType) {
+            const currentItem = stage1Items[stage1Index];
+            if (selectedType === currentItem.type) {
+                playSound('correct');
+                addScore(10);
+                showToast("أحسنت! إجابة صحيحة 🌟", true);
+                updateGhosoun("عمل رائع يا صديقي الذكي! لنواصل التنظيف! 🎉", true);
+                stage1Index++;
+                setTimeout(loadStage1Item, 1200);
+            } else {
+                playSound('wrong');
+                showToast("حاول مرة أخرى يا بطل! 💡", false);
+                updateGhosoun("فكر جلياً يا بطل، أين يجب وضع هذا النوع؟ 🤔", false);
+            }
+        }
+
+        // ==================== STAGE 2 LOGIC ====================
+        const stage2Questions = [
+            {
+                question: "أيهما أفضل عند غسل اليدين بالصابون؟",
+                optA: { text: "إغلاق صنبور المياه", emoji: "🚰", isCorrect: true },
+                optB: { text: "ترك صنبور المياه مفتوحاً", emoji: "💧", isCorrect: false }
+            },
+            {
+                question: "ماذا نفعل عند الخروج من الغرفة؟",
+                optA: { text: "ترك الأنوار مضاءة", emoji: "💡", isCorrect: false },
+                optB: { text: "إطفاء الأنوار لتوفير الكهرباء", emoji: "🌙", isCorrect: true }
+            },
+            {
+                question: "كيف نجعل الهواء نقيًا ولطيفًا؟",
+                optA: { text: "زراعة الأشجار والنباتات", emoji: "🌳", isCorrect: true },
+                optB: { text: "قطع الأشجار الجميلة", emoji: "🪓", isCorrect: false }
+            },
+            {
+                question: "أين نضع القمامة أثناء المشي؟",
+                optA: { text: "إلقاء القمامة في الشارع", emoji: "🚯", isCorrect: false },
+                optB: { text: "إلقاء القمامة في سلة المهملات", emoji: "🗑️", isCorrect: true }
+            }
+        ];
+        let stage2Index = 0;
+
+        function startStage2() {
+            switchScreen('screen-stage2');
+            stage2Index = 0;
+            loadStage2Question();
+        }
+
+        function loadStage2Question() {
+            if (stage2Index >= stage2Questions.length) {
+                // Move to Stage 3
+                startStage3();
+                return;
+            }
+
+            const q = stage2Questions[stage2Index];
+            document.getElementById('stage2-question').innerText = q.question;
+            document.getElementById('stage2-progress').innerText = `${stage2Index + 1} / ${stage2Questions.length}`;
+
+            document.getElementById('opt-a-emoji').innerText = q.optA.emoji;
+            document.getElementById('opt-a-text').innerText = q.optA.text;
+
+            document.getElementById('opt-b-emoji').innerText = q.optB.emoji;
+            document.getElementById('opt-b-text').innerText = q.optB.text;
+
+            updateGhosoun("اختر التصرف الصديق للبيئة من بين الخيارين! 🤝", true);
+        }
+
+        function checkEcoFriend(optionIdx) {
+            const q = stage2Questions[stage2Index];
+            const isCorrect = (optionIdx === 0 && q.optA.isCorrect) || (optionIdx === 1 && q.optB.isCorrect);
+
+            if (isCorrect) {
+                playSound('correct');
+                addScore(10);
+                showToast("ممتاز! هذا تصرف صديق للبيئة 👍", true);
+                updateGhosoun("يا لك من بطل واعي ومحافظ على الطبيعة! 🌸", true);
+                stage2Index++;
+                setTimeout(loadStage2Question, 1200);
+            } else {
+                playSound('wrong');
+                showToast("حاول مرة أخرى يا بطل! 💡", false);
+                updateGhosoun("هذا التصرف يؤذي البيئة يا صديقي، اختر التصرف النافع! 🌿", false);
+            }
+        }
+
+        // ==================== STAGE 3 LOGIC ====================
+        const stage3Scenarios = [
+            {
+                instruction: "ماذا تفعل بالعلبة الفارغة القديمة؟",
+                options: [
+                    { text: "تحويلها إلى أصيص زراعة جميل", emoji: "🪴", isCorrect: true },
+                    { text: "رميها في البحر", emoji: "🌊", isCorrect: false },
+                    { text: "تركها على الأرض", emoji: "🍂", isCorrect: false }
+                ]
+            },
+            {
+                instruction: "كيف نحمي الحدائق والمتنزهات؟",
+                options: [
+                    { text: "قطف الزهور ورميها", emoji: "🥀", isCorrect: false },
+                    { text: "المحافظة على نظافة المكان", emoji: "🧹", isCorrect: true },
+                    { text: "الكتابة على الجدران", emoji: "🖍️", isCorrect: false }
+                ]
+            },
+            {
+                instruction: "كيف نحافظ على مياه النهر؟",
+                options: [
+                    { text: "إلقاء الأكياس في الماء", emoji: "🛍️", isCorrect: false },
+                    { text: "عدم إلقاء الأوساخ في النهر", emoji: "🐟", isCorrect: true },
+                    { text: "هدر المياه بكثرة", emoji: "💦", isCorrect: false }
+                ]
+            }
+        ];
+        let stage3Index = 0;
+
+        function startStage3() {
+            switchScreen('screen-stage3');
+            stage3Index = 0;
+            loadStage3Scenario();
+        }
+
+        function loadStage3Scenario() {
+            if (stage3Index >= stage3Scenarios.length) {
+                // Finish Game!
+                finishGame();
+                return;
+            }
+
+            const current = stage3Scenarios[stage3Index];
+            document.getElementById('stage3-instruction').innerText = current.instruction;
+            document.getElementById('stage3-progress').innerText = `${stage3Index + 1} / ${stage3Scenarios.length}`;
+
+            const grid = document.getElementById('stage3-options-grid');
+            grid.innerHTML = '';
+
+            current.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                btn.className = "btn-bounce bg-white hover:bg-emerald-50 border-4 border-emerald-300 p-4 rounded-3xl flex flex-col items-center text-center shadow-lg transition-all space-y-2 group";
+                btn.innerHTML = `
+                    <span class="text-5xl sm:text-6xl group-hover:scale-110 transition-transform">${opt.emoji}</span>
+                    <span class="font-black text-gray-800 text-sm sm:text-base">${opt.text}</span>
+                `;
+                btn.onclick = () => checkStage3(opt.isCorrect);
+                grid.appendChild(btn);
+            });
+
+            updateGhosoun("أنقذ الطبيعة باختيار التصرف السليم والإيجابي! 🌳", true);
+        }
+
+        function checkStage3(isCorrect) {
+            if (isCorrect) {
+                playSound('correct');
+                addScore(10);
+                showToast("رائع جداً! أنت أنقذت الطبيعة 🌈", true);
+                updateGhosoun("أحسنت! كوكبنا أصبح أجمل بفضل أفكارك الرائعة! 🌺", true);
+                stage3Index++;
+                setTimeout(loadStage3Scenario, 1200);
+            } else {
+                playSound('wrong');
+                showToast("حاول مرة أخرى يا بطل! 💡", false);
+                updateGhosoun("فكر في الخيار الذي يجعل الطبيعة سعيدة ونظيفة! 🌻", false);
+            }
+        }
+
+        // ==================== START & FINISH LOGIC ====================
+        function startGame() {
+            const nameInput = document.getElementById('child-name').value.trim();
+            if (nameInput !== "") {
+                playerName = nameInput;
+            } else {
+                playerName = "البطل الصغير";
+            }
+
+            score = 0;
+            document.getElementById('score-display').innerText = score;
+
+            // Start with Stage 1
+            stage1Index = 0;
+            switchScreen('screen-stage1');
+            loadStage1Item();
+
+            // Resume audio if needed
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function finishGame() {
+            switchScreen('screen-end');
+            playSound('win');
+
+            // Trigger Confetti Celebration
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+
+            // Update Certificate Data
+            document.getElementById('cert-hero-name').innerText = playerName;
+            document.getElementById('final-score').innerText = score;
+
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('cert-date').innerText = dateStr;
+
+            updateGhosoun(`أحسنت يا بطل (${playerName})! لقد ساعدتني في حماية كوكب إيكo-توبيا. أنت الآن بطل البيئة الصغير! 🏆🎉`, true);
+        }
+
+        function restartGame() {
+            switchScreen('screen-start');
+            updateGhosoun("مرحبًا يا بطل! هل تساعدني في حماية كوكبنا الجميل؟ هيا نلعب ونتعلم معًا! 🌸✨", true);
+        }
+    </script>
+</body>
+</html>
